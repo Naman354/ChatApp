@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const messageSchema = new messageSchema({
+const messageSchema = new mongoose.Schema({
     room:{
         type:String,
         required:true,
