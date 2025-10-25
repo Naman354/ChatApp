@@ -9,11 +9,11 @@ export const getMessagesByRoom = async (req, res) => {
         const room = await chatRoom.findById(roomId);
         if(!room) return res.status(404).json({message: "Chat Room not found"});
     
-        const messages = (await Messages.find({room: roomId}).populate("sender", "username email")).toSorted({createdAt: 1});
+        const messages = await Messages.find({room: roomId}).populate("sender", "username email").sort({createdAt: 1});
         
         res.status(200).json(messages);
     } catch(err) {
-        console.error("Error fetching messages:", error);
+        console.error("Error fetching messages:", err);
         res.status(500).json({message:"Server Error"});
     }
 };

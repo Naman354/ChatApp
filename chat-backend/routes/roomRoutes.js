@@ -8,6 +8,6 @@ const router = express.Router();
 router.post("/", protect, createRoom);
 router.get("/", protect, getRooms);
 
-router.get("/rooms/:roomId/messages", protect, getMessagesByRoom);
+router.get("/:roomId/messages", protect, getMessagesByRoom);
 
 export default router;

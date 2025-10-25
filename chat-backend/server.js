@@ -7,20 +7,31 @@ import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import roomRoutes from "./routes/roomRoutes.js";
 import { chatSocket } from "./sockets/chatSocket.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config();
 connectDB();
 
 const app = express();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-app.use(cors());
+app.use(cors({
+  origin: "*", // or http://127.0.0.1:5500 if you want to restrict to Live Server
+  methods: ["GET", "POST"],
+  credentials: true
+}));
+
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
-app.use("api/rooms", roomRoutes);
+app.use("/api/rooms", roomRoutes);
 
-app.get("/", (req, res) => {
-  res.send("Real-time Chat API is running ");
+app.use(express.static(path.join(__dirname, "chat-frontend")));
+
+app.get((req, res) => {
+  res.sendFile(path.join(__dirname, "chat-frontend", "index.html"));
 });
 
 const server = http.createServer(app);

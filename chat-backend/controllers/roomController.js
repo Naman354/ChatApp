@@ -7,18 +7,20 @@ export const createRoom = async (req, res) => {
 
         const existingRoom = await chatRoom.findOne({name});
         if (existingRoom) {
-            return res.status.json({message: "Room name already used"});
+            return res.status(400).json({message: "Room name already used"});
         }
 
         const newRoom = new chatRoom({
         name,
-        created_by: req.user.id,
+        created_by: req.user._id,
         });
 
         await newRoom.save();
+        const populatedRoom = await newRoom.populate("created_by", "username email");
+
         res.status(201).json({
             message:"Chatroom created successfully",
-            roon: newRoom,
+            room: populatedRoom,
         });
     } catch(err) {
         console.log("Error creating room", err);

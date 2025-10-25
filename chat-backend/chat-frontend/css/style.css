@@ -1,0 +1,8 @@
+body { font-family: Arial, sans-serif; padding: 20px; }
+h2, h3 { margin-bottom: 10px; }
+input { margin: 5px 0; padding: 5px; }
+button { padding: 5px 10px; margin-left: 5px; }
+#roomContainer, #chatContainer { float: left; margin-right: 20px; }
+#roomsList, #messages { list-style: none; padding: 0; border: 1px solid #ccc; height: 300px; width: 300px; overflow-y: auto; }
+#roomsList li, #messages li { padding: 5px; cursor: pointer; }
+#roomsList li:hover { background: #f0f0f0; }

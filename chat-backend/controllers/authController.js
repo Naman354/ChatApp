@@ -2,7 +2,7 @@ import {validatePassword} from "../models/userModel.js";
 import jwt from "jsonwebtoken";
 import User from "../models/userModel.js";
 
-export const generateToken= async (id)=> {
+export const generateToken = (id)=> {
     return jwt.sign({id}, process.env.JWT_SECRET, {expiresIn: "1h"});
 }
 
@@ -17,8 +17,8 @@ export const register = async (req, res) => {
         const userExists = await User.findOne({email});
         if(userExists) return res.status(400).json({message:"User Already Exists"});
 
-        const user = await User.create({username, email, passsword});
-        res.status(200).jso({
+        const user = await User.create({username, email, password});
+        res.status(200).json({
             _id:user.id,
             username:user.username,
             email:user.email,
