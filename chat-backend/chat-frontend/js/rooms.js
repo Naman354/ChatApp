@@ -21,6 +21,35 @@ export async function loadRooms() {
         const li = document.createElement("li");
         li.textContent = room.name;
         li.dataset.id = room._id; 
+
+        const currentUser = sessionStorage.getItem("username");
+    if (room.created_by.username === currentUser) {
+        const delBtn = document.createElement("button");
+    delBtn.textContent = "🗑️";
+    delBtn.classList.add("delete-btn");
+    delBtn.onclick = async (e) => {
+        e.stopPropagation(); // prevent joining when clicking delete
+        if (!confirm(`Delete room "${room.name}"?`)) return;
+
+        const token = getToken();
+        const res = await fetch(`${API_URL}/${room._id}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` }
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            alert("Room deleted");
+            loadRooms();
+        } else {
+            const data = await res.json();
+            alert(data.message);
+        }
+    
+    }
+
+    li.appendChild(delBtn);
+}
         li.onclick = () => {
             joinRoom(room._id);
             document.getElementById("currentRoom").textContent = room.name;
