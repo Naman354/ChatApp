@@ -25,8 +25,8 @@ export async function loadRooms() {
         const currentUser = sessionStorage.getItem("username");
     if (room.created_by.username === currentUser) {
         const delBtn = document.createElement("button");
-    delBtn.textContent = "🗑️";
     delBtn.classList.add("delete-btn");
+    delBtn.innerHTML = '<i class="fas fa-trash"></i>';
     delBtn.onclick = async (e) => {
         e.stopPropagation(); // prevent joining when clicking delete
         if (!confirm(`Delete room "${room.name}"?`)) return;

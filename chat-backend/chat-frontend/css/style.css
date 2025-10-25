@@ -178,11 +178,11 @@ h2 {
   margin-left: 10px;
   background: none;
   border: none;
-  color: #ff4d4d;
+  color:  #075e54;
   cursor: pointer;
   font-size: 16px;
 }
 
 .delete-btn:hover {
-  color: red;
+  color: #0a7a66;
 }
