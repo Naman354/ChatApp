@@ -9,20 +9,25 @@
 <body>
 <h2>Real-Time Chat</h2>
 
-<div id="roomContainer">
+<div class="chat-wrapper">
+<div id="roomContainer" class="sidebar">
   <h3>Rooms</h3>
   <ul id="roomsList"></ul>
+  <div class="new-room">
   <input id="newRoom" placeholder="New room name" />
   <button id="createRoomBtn">Create Room</button>
+  </div>
 </div>
 
-<div id="chatContainer">
+<div id="chatContainer" class="chat-area">
   <h3 id="currentRoom">Select a room</h3>
-  <ul id="messages"></ul>
+  <ul id="messages"class="messages-list"></ul>
+  <div class="message-input">
   <input id="msg" placeholder="Type a message" />
   <button id="sendBtn">Send</button>
+  </div>
 </div>
-
+</body> 
 <script type="module" src="js/chat.js"></script>
 </body>
 </html>
