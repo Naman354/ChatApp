@@ -47,6 +47,11 @@
             username: user.username,
             message: `${user.username} joined the room`,
         });
+        
+        io.to(roomId).emit(
+        "system_message",
+        `${user.username} joined the room.`
+      );
         });
 
         // Send Message
@@ -93,6 +98,11 @@
             username: user.username,
             message: `${user.username} left the room`,
         });
+
+        io.to(roomId).emit(
+        "system_message",
+        `${user.username} left the room.`
+      );
         });
 
         // Disconnect

@@ -1,7 +1,10 @@
 import { getToken } from "./auth.js";
-import { initSocket, joinRoom } from "./socket.js";
+import { initSocket, joinRoom as socketJoinRoom } from "./socket.js";
+import { socket } from "./socket.js";
 
 const API_URL = "/api/rooms";
+export let currentRoomId = null;
+export let joinedRoom = false;
 
 export async function initChatPage() {
     initSocket();
@@ -17,10 +20,11 @@ export async function loadRooms() {
     rooms.forEach(room => {
         const li = document.createElement("li");
         li.textContent = room.name;
+        li.dataset.id = room._id; 
         li.onclick = () => {
             joinRoom(room._id);
             document.getElementById("currentRoom").textContent = room.name;
-            loadRoomMessages(room._id);
+
         };
         roomsList.appendChild(li);
     });
@@ -42,6 +46,34 @@ export async function createRoom() {
     } else alert(data.message);
 }
 
+export function joinRoom(roomId) {
+    currentRoomId = roomId;
+    joinedRoom = false; // user hasn’t joined yet
+     const li = document.querySelector(`#roomsList li[data-id="${roomId}"]`);
+    document.getElementById("currentRoom").textContent = li ? li.textContent : "Room";
+    document.getElementById("messages").innerHTML = "";
+    
+    const btn = document.getElementById("joinLeaveBtn");
+    btn.disabled = false;
+    btn.textContent = "Join";
+}
+
+document.getElementById("joinLeaveBtn").addEventListener("click", async () => {
+    if (!currentRoomId) return;
+
+    if (!joinedRoom) {
+        socket.emit("join_room", currentRoomId);
+        joinedRoom = true;
+        document.getElementById("joinLeaveBtn").textContent = "Leave";
+        await loadRoomMessages(currentRoomId);
+    } else {
+        socket.emit("leave_room", currentRoomId);
+        joinedRoom = false;
+        document.getElementById("joinLeaveBtn").textContent = "Join";
+        document.getElementById("messages").innerHTML = "";
+    }
+});
+
 export async function loadRoomMessages(roomId) {
     const token = getToken();
     const res = await fetch(`${API_URL}/${roomId}/messages`, { headers: { Authorization: `Bearer ${token}` } });
@@ -53,6 +85,5 @@ export async function loadRoomMessages(roomId) {
         li.textContent = `${msg.sender.username}: ${msg.content}`;
         messagesUL.appendChild(li);
     });
-}
-
+}   
 window.createRoom = createRoom;

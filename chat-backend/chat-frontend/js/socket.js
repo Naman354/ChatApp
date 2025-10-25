@@ -1,7 +1,7 @@
 import { getToken, getUsername } from "./auth.js";
+import { currentRoomId, joinedRoom } from "./rooms.js";
 
 export let socket;
-export let currentRoomId = null;
 
 export function initSocket() {
     const token = getToken();
@@ -23,29 +23,37 @@ export function initSocket() {
         addMessage(data.sender.username, data.content);
     });
 
-    socket.on("user_joined", (data) => { if(data.room === currentRoomId) addMessage("System", data.message); });
-    socket.on("user_left", (data) => { if(data.room === currentRoomId) addMessage("System", data.message); });
+    socket.on("system_message", (msg) => {
+  const messagesUL = document.getElementById("messages");
+  const li = document.createElement("li");
+  li.textContent = msg;
+  li.classList.add("system-message"); // distinct font/style
+  messagesUL.appendChild(li);
+});
 }
 
 export function joinRoom(roomId) {
-    if(currentRoomId) socket.emit("leave_room", currentRoomId);
+    if (!roomId) return;
+    if (socket) {
+        if(currentRoomId) socket.emit("leave_room", currentRoomId);
     currentRoomId = roomId;
+    }
     socket.emit("join_room", roomId);
-    document.getElementById("messages").innerHTML = "";
 }
 
 export function sendMessage() {
     const msgInput = document.getElementById("msg");
     const msg = msgInput.value.trim();
-    if(!msg || !currentRoomId) return alert("Select a room and type a message");
+    if (!msg) return alert("Type a message");
+    if(!currentRoomId) return alert("Join a room first");
     socket.emit("send_message", { roomId: currentRoomId, content: msg });
     msgInput.value = "";
 }
 
-window.sendMessage = sendMessage;
-
 export function addMessage(sender, content) {
     const li = document.createElement("li");
     li.textContent = `${sender}: ${content}`;
-    document.getElementById("messages").appendChild(li);
+    document.getElementById("messages").appendChild(li);    
 }
+
+window.sendMessage = sendMessage;
